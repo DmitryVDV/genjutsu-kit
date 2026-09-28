@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<title>Genjutsu via fal</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Unbounded:wght@500;700;800&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F1F2F4; --surface:#FFFFFF; --sunk:#E7E9ED; --ink:#15171C; --muted:#5A5F6A; --line:#D8DBE1;
+  --lobby:#D95B14; --lobby-soft:#FBE7DA; --gold:#9C6D1C; --gold-soft:#F3E8D2;
+  --navy:#1F2E52; --navy-soft:#E2E7F1; --code-bg:#15171C; --code-ink:#ECEAE4; --code-line:#3A3D46;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101114; --surface:#181A1F; --sunk:#202329; --ink:#ECEAE4; --muted:#A2A5AD; --line:#2C2F37;
+    --lobby:#F07A36; --lobby-soft:#34211A; --gold:#DDB266; --gold-soft:#2C2517;
+    --navy:#A5B7DC; --navy-soft:#1B2234; --code-bg:#0B0C0E; --code-ink:#ECEAE4; --code-line:#33363E;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101114; --surface:#181A1F; --sunk:#202329; --ink:#ECEAE4; --muted:#A2A5AD; --line:#2C2F37;
+  --lobby:#F07A36; --lobby-soft:#34211A; --gold:#DDB266; --gold-soft:#2C2517;
+  --navy:#A5B7DC; --navy-soft:#1B2234; --code-bg:#0B0C0E; --code-ink:#ECEAE4; --code-line:#33363E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,-apple-system,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:44px 96px;display:flex;flex-direction:column;gap:64px}
+h1,h2,h3{font-family:Unbounded,"IBM Plex Sans",system-ui,sans-serif;margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,60px);font-weight:800;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--lobby)}
+h2{font-size:clamp(22px,3vw,28px);font-weight:700}
+h3{font-size:17px;font-weight:500}
+p{margin:0;max-width:66ch}
+a{color:var(--lobby);text-underline-offset:3px}
+.eyebrow{font:500 12px/1 "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+code{font:.88em "JetBrains Mono",monospace;background:var(--sunk);border-radius:4px;padding:1px 5px}
+
+/* language switch */
+.lang{align-self:flex-end;margin-bottom:-44px;font-size:13px;color:var(--muted)}
+.lang a{color:var(--muted)}
+.lang a:hover{color:var(--lobby)}
+.lang b{color:var(--ink);font-weight:500}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center}
+.hero-text{display:flex;flex-direction:column;gap:18px}
+.lead{font-size:18px;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);min-width:120px}
+.fact b{font:700 20px/1.1 Unbounded,sans-serif;font-variant-numeric:tabular-nums}
+.fact span{font-size:13px;color:var(--muted)}
+.hero-video{display:flex;flex-direction:column;gap:8px}
+.hero-video .yt{position:relative;display:block;width:100%;max-width:420px;margin:0 auto;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:9/16}
+.hero-video .yt img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-video .yt .play{position:absolute;left:50%;top:50%;width:72px;height:50px;transform:translate(-50%,-50%);border-radius:14px;background:#f00;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.4);transition:transform .15s}
+.hero-video .yt .play::after{content:"";border-style:solid;border-width:11px 0 11px 19px;border-color:transparent transparent transparent #fff;margin-left:4px}
+.hero-video .yt:hover .play{transform:translate(-50%,-50%) scale(1.08)}
+.hero-video figcaption{font-size:13px;color:var(--muted)}
+.hero-video figcaption b{color:var(--ink);font-weight:500}
+
+/* start */
+.start{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.start li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.start ol{display:contents}
+.start .n{font:700 13px/1 "JetBrains Mono",monospace;color:var(--lobby)}
+.section{display:flex;flex-direction:column;gap:20px}
+.section-head{display:flex;flex-direction:column;gap:8px}
+
+/* dialogue timeline */
+.steps{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:14px}
+.step{position:relative;padding:0 0 30px 32px;display:flex;flex-direction:column;gap:10px}
+.step:last-child{padding-bottom:0}
+.step::before{content:attr(data-n);position:absolute;left:-15px;top:-2px;width:28px;height:28px;border-radius:50%;background:var(--bg);border:2px solid var(--lobby);color:var(--lobby);font:700 12px/24px "JetBrains Mono",monospace;text-align:center}
+.ask{background:var(--lobby-soft);border-radius:0 10px 10px 10px;padding:10px 14px;max-width:62ch}
+.ask::before{content:"Claude asks";display:block;font:500 11px/1.4 "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--lobby);margin-bottom:2px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:500 12px/1 "JetBrains Mono",monospace;padding:6px 8px;border-radius:5px;background:var(--sunk);color:var(--muted)}
+.tag.reuse{background:var(--navy-soft);color:var(--navy)}
+.tag.cost{background:var(--gold-soft);color:var(--gold)}
+
+/* avatars */
+.looks{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.look{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.look .who{display:flex;flex-direction:column;gap:2px}
+.look .who b{font:500 15px/1.3 Unbounded,sans-serif}
+.look .who span{font-size:13px;color:var(--muted)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shots img{width:100%;border-radius:6px;display:block;background:var(--sunk)}
+.shots .wide{grid-column:1/-1}
+
+/* code */
+.cmd{position:relative;background:var(--code-bg);color:var(--code-ink);border-radius:8px;overflow:hidden}
+.cmd pre{margin:0;padding:14px 16px;padding-right:96px;overflow-x:auto;font:13px/1.6 "JetBrains Mono",monospace;white-space:pre}
+.cmd button{position:absolute;top:8px;right:8px;font:500 12px/1 "JetBrains Mono",monospace;background:transparent;color:var(--code-ink);border:1px solid var(--code-line);border-radius:5px;padding:7px 9px;cursor:pointer}
+.cmd button:hover,.cmd button:focus-visible{border-color:var(--lobby);outline:none}
+
+/* tables */
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font:500 11px/1.3 "JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--sunk)}
+td.r,th.r{text-align:right;white-space:nowrap}
+td code{white-space:nowrap}
+tr.total td{font-weight:600}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.shot{display:block;margin-top:4px}
+.cmd.prose pre{white-space:pre-wrap;font-size:14px}
+#desktop > h3{font-size:17px;margin-top:6px}
+.shot img{width:100%;display:block;border-radius:6px;border:1px solid var(--line);background:var(--sunk)}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.note h3{font-size:15px}
+footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+
+@media (max-width:820px){
+  .hero,.two,.looks{grid-template-columns:1fr}
+  .start{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<nav class="lang" aria-label="Language"><a href="../" hreflang="ru" lang="ru">Русский</a> · <b>English</b></nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="eyebrow">Video recast · Kling O3 edit · fal.ai</div>
+    <h1>You instead of the performers. <em>In two looks.</em></h1>
+    <p class="lead">The motion, facial expressions, timing and camera come from someone else's video; the face and body come from your raw photos. On the left and on the right: you in two looks, or two different people. Claude guides you step by step and asks the questions itself.</p>
+    <div class="facts">
+      <div class="fact"><b>≈ $5–6</b><span>a full 15-second clip</span></div>
+      <div class="fact"><b>2 files</b><span>clip and comparison</span></div>
+      <div class="fact"><b>iPhone</b><span>straight to your Photos</span></div>
+    </div>
+  </div>
+  <figure class="hero-video" style="margin:0">
+    <a class="yt" href="https://www.youtube.com/shorts/CoiIKzihwpU" target="_blank" rel="noopener" aria-label="Watch the example on YouTube"><img src="https://i.ytimg.com/vi/CoiIKzihwpU/oar2.jpg" alt="Example on YouTube" loading="lazy"><span class="play"></span></a>
+    <figcaption><b>Example:</b> <a href="https://www.youtube.com/shorts/CoiIKzihwpU">watch on YouTube</a>.</figcaption>
+  </figure>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">Getting started</div>
+    <h2>Three steps to the first question</h2>
+  </div>
+  <div class="start"><ol>
+    <li><span class="n">01</span><h3>Open the folder in Claude Code</h3><p class="muted">The <code>genjutsu-kit</code> folder is already a project: <code>cd genjutsu-kit &amp;&amp; claude</code> in the terminal, or the Code tab in Claude Desktop — see <a href="#desktop">below</a>. To use it in another project, copy <code>.claude/skills/genjutsu</code> there.</p></li>
+    <li><span class="n">02</span><h3>Add your fal.ai key</h3><p class="muted">Get a key at <a href="https://fal.ai/dashboard/keys">fal.ai/dashboard/keys</a>; a $10 balance is enough for 1–2 clips. Run <code>cp .env.example .env</code> and paste the key in.</p></li>
+    <li><span class="n">03</span><h3>Type <code>/genjutsu</code></h3><p class="muted">Or “I want to redo a trend”. From there Claude asks the questions and shows the price before every spend.</p></li>
+  </ol></div>
+</section>
+
+<section class="section" id="desktop">
+  <div class="section-head">
+    <div class="eyebrow">Claude Desktop</div>
+    <h2>Run it from the app, no terminal</h2>
+    <p class="muted">Everything happens in the Claude Desktop app, in the <b>Code</b> tab: Claude downloads the project, checks the programs and guides you step by step. You need a Pro, Max, Team or Enterprise plan.</p>
+  </div>
+  <h3>The first time</h3>
+  <div class="start"><ol>
+    <li><span class="n">01</span><h3>Switch to Code</h3><p class="muted">At the top left, next to the arrows, there are two icons: the bubble is Chat, <code>&lt;/&gt;</code> is <b>Code</b>. Click <code>&lt;/&gt;</code>.</p><a class="shot" href="../docs/desktop/desktop-1-code-tab.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-1-code-tab.png" alt="Chat / Code switch" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+    <li><span class="n">02</span><h3>Pick a folder</h3><p class="muted">Click <b>+ New</b>. There are two buttons above the input box: make sure the first one says <b>Local</b>. Click the second one — <b>No folder</b> → <b>Open folder…</b>. In the file dialog, create an empty folder with the “New Folder” button, for example <code>Documents/Genjutsu</code>, and click “Open”.</p><a class="shot" href="../docs/desktop/desktop-2-folder.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-2-folder.png" alt="Choosing the Local environment and a folder" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+    <li><span class="n">03</span><h3>Paste the text into the chat</h3><p class="muted">Click “copy” below these cards, paste into the chat (<code>Cmd+V</code>) and send. Claude downloads the files into the folder and checks the programs.</p><a class="shot" href="../docs/desktop/desktop-3-install.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-3-install.png" alt="Install text in the chat" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+  </ol></div>
+  <div class="cmd prose"><button type="button" data-copy>copy</button><pre>Install the project from this link: https://github.com/DmitryVDV/genjutsu-kit
+
+1. Download all files straight into this folder, not into a subfolder. If git is missing, download the archive from GitHub and unpack it here.
+2. Check that python3, ffmpeg and yt-dlp are installed. Install what's missing, or explain in simple words what I should do.
+3. Create a .env file from .env.example and open it in TextEdit so I can paste my fal.ai key. Don't ask for the key in the chat.
+4. When I write "done", read .claude/skills/genjutsu/SKILL.md and guide me through it from step 0, one question at a time. Talk to me in English.</pre></div>
+  <div class="start"><ol>
+    <li><span class="n">04</span><h3>Enter the key</h3><p class="muted">Claude opens the <code>.env</code> file in TextEdit. Type your fal.ai key right after <code>FAL_KEY=</code>, save (<code>Cmd+S</code>) and write “done” in the chat. Get the key at <a href="https://fal.ai/dashboard/keys">fal.ai/dashboard/keys</a>.</p><a class="shot" href="../docs/desktop/desktop-5-key.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-5-key.png" alt="The .env file in TextEdit" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+    <li><span class="n">05</span><h3>Allow the commands</h3><p class="muted">Claude asks permission before each command — click “Allow”. Money is only spent after you say “yes” in the chat, in any mode.</p><a class="shot" href="../docs/desktop/desktop-4-permission.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-4-permission.png" alt="Permission request for a command" loading="lazy" onerror="this.parentElement.remove()"></a><a class="shot" href="../docs/desktop/desktop-7-modes.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-7-modes.png" alt="Permission modes" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+    <li><span class="n">06</span><h3>Drag photos into the chat</h3><p class="muted">When Claude asks for photos, drag them into the input box and add a note: “raw photos — this is me”, “style reference photo for the left look”.</p><a class="shot" href="../docs/desktop/desktop-6-attach.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-6-attach.png" alt="Photos attached to a message" loading="lazy" onerror="this.parentElement.remove()"></a></li>
+  </ol></div>
+  <h3>Next time</h3>
+  <div class="two">
+    <div class="note"><h3>New chat in the same folder</h3><p class="muted">Code tab → <b>+ New</b> → <b>Local</b> → the folder button next to it → <b>Open folder…</b> → your <code>Genjutsu</code> folder. Recent folders usually show up in the same list. Write in plain words: “I want to redo a trend” — or type the <code>/genjutsu</code> command. The command only appears in a new chat after installation: in the chat where you installed, it isn't there yet, and that's normal.</p><a class="shot" href="../docs/desktop/desktop-9-skill.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-9-skill.png" alt="The /genjutsu command in the input box" loading="lazy" onerror="this.parentElement.remove()"></a></div>
+    <div class="note"><h3>Claude doesn't know what you mean</h3><p class="muted">Write in the chat: “read .claude/skills/genjutsu/SKILL.md and guide me through it”. If Claude can't see that file, the wrong folder is selected — start a new chat and pick the <code>Genjutsu</code> folder.</p></div>
+  </div>
+  <h3>If something goes wrong</h3>
+  <div class="two">
+    <div class="note"><h3>Chat mode won't work</h3><p class="muted">In regular Chat (the bubble icon), code runs in the cloud: your folder, key and ffmpeg aren't there. Only Code with the Local environment.</p><a class="shot" href="../docs/desktop/desktop-8-chat.png" target="_blank" rel="noopener"><img src="../docs/desktop/desktop-8-chat.png" alt="Chat mode — not for this project" loading="lazy" onerror="this.parentElement.remove()"></a></div>
+    <div class="note"><h3>It says “ffmpeg: НЕТ” (not found) even though it's installed</h3><p class="muted">Quit Claude completely (<code>Cmd+Q</code>) and open it again. If that doesn't help, add the <code>/opt/homebrew/bin</code> folder to <code>PATH</code> in the Local environment settings (the gear icon by the input box).</p></div>
+    <div class="note"><h3>Generation takes a long time</h3><p class="muted">A video takes 5–16 minutes to render in the background. Don't close the app and don't let your Mac go to sleep. You can follow progress in the task panel: menu Views → Tasks.</p></div>
+    <div class="note"><h3>The key accidentally went into the chat</h3><p class="muted">Delete it at <a href="https://fal.ai/dashboard/keys">fal.ai/dashboard/keys</a>, create a new one and put it in <code>.env</code>: the key can't be removed from the chat history.</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">Talking to Claude</div>
+    <h2>What it asks and what it reuses</h2>
+    <p class="muted">One step, one question. Before each step Claude checks what's already done and offers to reuse it: the key, the downloaded video, avatars, the prompt, earlier runs.</p>
+  </div>
+  <div class="steps">
+    <div class="step" data-n="0">
+      <h3>Check and what's already there</h3>
+      <div class="ask">Continue the last clip or start a new one?</div>
+      <div class="tags"><span class="tag">check · status</span><span class="tag reuse">sees everything done before</span></div>
+    </div>
+    <div class="step" data-n="1">
+      <h3>fal.ai key</h3>
+      <div class="ask">Do you have a fal.ai key? Put it in <code>.env</code> yourself — in the chat it would stay in the history.</div>
+      <div class="tags"><span class="tag reuse">key already there — step skipped</span></div>
+    </div>
+    <div class="step" data-n="2">
+      <h3>Source video</h3>
+      <div class="ask">Which video are we redoing, and which seconds? Not sure — let's take Hotel Lobby, 0:12–0:27.</div>
+      <div class="tags"><span class="tag">fetch: download, contact sheet, cuts</span><span class="tag reuse">downloaded video isn't fetched again</span><span class="tag">up to 15 s per pass</span></div>
+    </div>
+    <div class="step" data-n="3">
+      <h3>Who's in the shot, and raw photos</h3>
+      <div class="ask">You in two looks, or two different people? Send 1–4 raw photos of each and tell me height and weight: loose clothes in photos make the body look heavier.</div>
+      <div class="tags"><span class="tag">HEIC works</span><span class="tag">one photo → face is cropped as a second one</span><span class="tag">other people's photos — with consent</span></div>
+    </div>
+    <div class="step" data-n="4">
+      <h3>Two looks</h3>
+      <div class="ask">What clothing style on the left and on the right? Describe it in words or add a style reference photo — one per look. It's a separate picture, not a raw photo of the person: only the clothes are taken from it.</div>
+      <div class="tags"><span class="tag">portfolio via GPT Image 2: face, full body, four-side sheet</span><span class="tag cost">≈ $0.9 per look</span><span class="tag reuse">finished images aren't regenerated</span><span class="tag">redoing an image ≈ $0.3</span></div>
+      <p class="muted">Claude won't go further until both looks are approved: the likeness in the video depends entirely on them.</p>
+    </div>
+    <div class="step" data-n="5">
+      <h3>Who's where, and format</h3>
+      <div class="ask">Which look goes on the left, which on the right? Do you want a comparison? Horizontal like the original, or vertical for Reels?</div>
+      <div class="tags"><span class="tag">two people don't fit in 9:16 — use 4:5, square or horizontal</span></div>
+    </div>
+    <div class="step" data-n="6">
+      <h3>Prompt</h3>
+      <div class="ask">Here's the prompt: look 1 on the left, look 2 on the right — in your words or from the references. Shall we use it?</div>
+      <div class="tags"><span class="tag reuse">existing prompt.txt — reused</span><span class="tag">the hands paragraph is added automatically</span></div>
+    </div>
+    <div class="step" data-n="7">
+      <h3>Test run, then the whole segment</h3>
+      <div class="ask">First a 6-second test run for ≈ $1? … Faces, clothes, hands — OK? Do the whole segment for ≈ $2.5?</div>
+      <div class="tags"><span class="tag cost">test run ≈ $1 · segment ≈ $2.5</span><span class="tag">5–16 minutes in the background</span><span class="tag">finish: sound + comparison</span></div>
+    </div>
+    <div class="step" data-n="8">
+      <h3>Fixes, segment by segment</h3>
+      <div class="ask">Where's something wrong — which second, and what exactly?</div>
+      <div class="tags"><span class="tag cost">3 s segment ≈ $0.5</span><span class="tag">splice at a cut</span><span class="tag reuse">the rest stays as it was</span></div>
+    </div>
+    <div class="step" data-n="9">
+      <h3>Result</h3>
+      <div class="ask">Done: clip and comparison, $5.8 spent. Crop it for Reels? Make another segment?</div>
+      <div class="tags"><span class="tag">final-….mp4</span><span class="tag">compare-….mp4</span><span class="tag">both iPhone-ready</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">The tools/ folder</div>
+    <h2>Utilities for doing it by hand</h2>
+    <p class="muted">Only ffmpeg (plus yt-dlp for links). Everything they output is ready for the iPhone Photos app: H.264 High 4.1, exactly 24 fps, AAC 48 kHz.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Script</th><th>What it does</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>to-iphone.sh</code></td><td>re-encodes any video so the Photos app accepts it</td><td><code>tools/to-iphone.sh final.mp4</code></td></tr>
+      <tr><td><code>compare.sh</code></td><td>“original above result” comparison</td><td><code>tools/compare.sh original.mp4 final.mp4 12 14.9 cmp.mp4</code></td></tr>
+      <tr><td><code>add-audio.sh</code></td><td>puts the original sound over the result</td><td><code>tools/add-audio.sh recast.mp4 original.mp4 12 14.9 final.mp4</code></td></tr>
+      <tr><td><code>contact-sheet.sh</code></td><td>4×3 contact sheet and cut timestamps</td><td><code>tools/contact-sheet.sh original.mp4 12 15 sheet.jpg</code></td></tr>
+      <tr><td><code>download.sh</code></td><td>downloads from YouTube or Instagram, up to 1080p</td><td><code>tools/download.sh "&lt;link&gt;" original.mp4</code></td></tr>
+      <tr><td><code>photo-prep.sh</code></td><td>HEIC → JPEG, face close-up crop</td><td><code>tools/photo-prep.sh IMG.heic face.jpg 560:660:20:1330</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="cmd"><button type="button" data-copy>copy</button><pre># the whole pipeline in one script (this is how Claude runs it)
+G=.claude/skills/genjutsu/scripts/genjutsu.py
+python3 $G status                                   # what's already done
+python3 $G fetch --url "https://www.youtube.com/watch?v=x9yop0nYR9g" --slug hotel-lobby --start 12 --duration 15
+python3 $G avatar --selfie selfie.jpg --selfie face.jpg --name navy --build "about 100 kg" --outfit "navy suit"
+python3 $G recast --video genjutsu/hotel-lobby/original.mp4 --slug hotel-lobby --prompt-file prompt.txt \
+  --element A/navy/face.png,A/navy/body.png,A/navy/sheet.png \
+  --element A/leopard/face.png,A/leopard/body.png,A/leopard/sheet.png --start 12 --duration 6
+python3 $G finish --clip genjutsu/hotel-lobby/recast-….mp4 --compare</pre></div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">Cost</div>
+    <h2>What a 15-second clip costs</h2>
+  </div>
+  <div class="two">
+    <div class="tbl"><table>
+      <thead><tr><th>Our way, fal.ai</th><th class="r">$</th></tr></thead>
+      <tbody>
+        <tr><td>Two looks (6 images, GPT Image 2)</td><td class="r">1.8</td></tr>
+        <tr><td>6 s test run (Kling O3 edit)</td><td class="r">1.0</td></tr>
+        <tr><td>Whole 15 s segment</td><td class="r">2.5</td></tr>
+        <tr><td>One hands fix, 3 s</td><td class="r">0.5</td></tr>
+        <tr class="total"><td>Total</td><td class="r">≈ 5.8</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Higgsfield Genjutsu, 15 s 720p</th><th class="r">$</th></tr></thead>
+      <tbody>
+        <tr><td>Starter, $19/mo</td><td class="r">7.3</td></tr>
+        <tr><td>Plus, $59/mo</td><td class="r">5.1</td></tr>
+        <tr><td>Ultra, $129/mo</td><td class="r">4.5</td></tr>
+        <tr><td>API without a subscription</td><td class="r">5.1–10.2</td></tr>
+        <tr class="total"><td>A fix means redoing the whole segment</td><td class="r">×2</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div class="eyebrow">What we learned on the first clip</div>
+    <h2>Why it works this way</h2>
+  </div>
+  <div class="two">
+    <div class="note"><h3>Kling, not Seedance</h3><p class="muted">Genjutsu, by all signs, runs on Seedance. But on fal, Seedance rejects photos of real people: “likenesses of real people”. Kling O3 edit accepts real faces and keeps the clothes of both looks and the shot changes.</p></div>
+    <div class="note"><h3>Hands come first</h3><p class="muted">Without a separate paragraph in the prompt, Kling passed a hand through a face and mixed up fingers. With the “HANDS ARE THE PRIORITY…” paragraph, the fingers matched the original. The script adds it automatically.</p></div>
+    <div class="note"><h3>No scene frame on a wide shot</h3><p class="muted">Kling takes the shot size from the reference image: a wide shot turned into a medium one. Without a scene frame, the wide shot stayed wide.</p></div>
+  </div>
+</section>
+
+<footer>Tested on September 27, 2026, with Hotel Lobby: two looks, 15 seconds, Kling O3 edit on fal.ai. Selfies and avatars go to fal storage behind a link that can't be guessed. If the source uses someone else's track, Instagram may mute the sound.</footer>
+</div>
+
+<script>
+document.querySelectorAll("[data-copy]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var pre=btn.parentElement.querySelector("pre");
+    var done=function(){btn.textContent="copied";setTimeout(function(){btn.textContent="copy"},1500)};
+    try{navigator.clipboard.writeText(pre.textContent).then(done,function(){sel(pre)})}catch(e){sel(pre)}
+  });
+});
+function sel(el){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r)}
+</script>

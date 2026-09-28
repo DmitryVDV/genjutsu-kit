@@ -1,6 +1,6 @@
 ---
 name: genjutsu
-description: Use when the user wants to redo someone else's video or a viral trend with the user instead of the performers — the user plays both performers in two different outfits, or two different people take the two roles — keeping motion, timing and camera; the Higgsfield Genjutsu workflow done through the fal.ai API, guided step by step with questions. Triggers — «сделай как в Genjutsu», «повторить тренд», «Hotel Lobby», «вставь меня в это видео», «заменить человека в видео», «перекаст», «сделай аватара», «аватар из селфи», «лист персонажа», «/genjutsu».
+description: Use when the user wants to redo someone else's video or a viral trend with the user instead of the performers — the user plays both performers in two different outfits, or two different people take the two roles — keeping motion, timing and camera; the Higgsfield Genjutsu workflow done through the fal.ai API, guided step by step with questions. Triggers — «сделай как в Genjutsu», «повторить тренд», «Hotel Lobby», «вставь меня в это видео», «заменить человека в видео», «перекаст», «сделай аватара», «аватар из селфи», «лист персонажа», «/genjutsu»; in English — "redo a trend", "recast this video", "put me in this video", "replace the people in a video", "make an avatar from a selfie", "character sheet". Talk to the user in their language.
 ---
 
 # Genjutsu через API — ведёшь человека по шагам

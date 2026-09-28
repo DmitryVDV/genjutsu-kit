@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="ru">
 <title>Genjutsu через fal</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -37,6 +39,11 @@ a{color:var(--lobby);text-underline-offset:3px}
 .eyebrow{font:500 12px/1 "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .muted{color:var(--muted)}
 code{font:.88em "JetBrains Mono",monospace;background:var(--sunk);border-radius:4px;padding:1px 5px}
+/* language switch */
+.lang{align-self:flex-end;margin-bottom:-44px;font-size:13px;color:var(--muted)}
+.lang a{color:var(--muted)}
+.lang a:hover{color:var(--lobby)}
+.lang b{color:var(--ink);font-weight:500}
 
 /* hero */
 .hero{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:center}
@@ -118,6 +125,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
 </style>
 
 <div class="wrap">
+<nav class="lang" aria-label="Язык"><b>Русский</b> · <a href="en/" hreflang="en" lang="en">English</a></nav>
 
 <section class="hero">
   <div class="hero-text">
