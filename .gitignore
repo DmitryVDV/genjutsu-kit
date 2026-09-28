@@ -1,0 +1,20 @@
+.env
+/genjutsu/
+__pycache__/
+.DS_Store
+
+# фото и видео (лица, чужие клипы)
+docs/img/
+docs/media/
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.webp
+*.mp4
+*.mov
+*.m4v
+*.webm
+
+# скриншоты Claude Desktop для инструкции — в git идут
+!docs/desktop/*.png
