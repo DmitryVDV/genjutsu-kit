@@ -6,7 +6,7 @@
 
 Ролик 15 секунд стоит около 5–6 $ на fal.ai. Claude ведёт по шагам, задаёт вопросы по одному и перед каждой тратой называет цену.
 
-**[Подробная инструкция с картинками →](https://dmitryvdv.github.io/genjutsu-kit/инструкция.html)**
+**[Подробная инструкция с картинками →](https://dmitryvdv.github.io/genjutsu-kit/)**
 
 ---
 
@@ -114,5 +114,5 @@ claude                              # и напиши /genjutsu
 | `tools/contact-sheet.sh` | лист кадров 4×3 и время резов |
 | `tools/download.sh` | скачать видео с YouTube / Instagram (yt-dlp) |
 | `tools/photo-prep.sh` | HEIC → JPEG и вырезать лицо крупно |
-| `инструкция.html` | подробная инструкция для человека, открывается через GitHub Pages |
+| `index.html` | подробная инструкция для человека, открывается через GitHub Pages |
 | `docs/desktop/` | скриншоты Claude Desktop для инструкций |
